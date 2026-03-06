@@ -6,51 +6,61 @@
     <title>내 유튜브 채널 관리 툴</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-        body { margin: 0; font-family: 'Roboto', Arial, sans-serif; background-color: #f9f9f9; color: #0f0f0f; }
+        body { margin: 0; font-family: 'Roboto', Arial, sans-serif; background-color: #f9f9f9; color: #0f0f0f; overflow-x: hidden; }
         
-        /* [1] 배너 영역 - 사진 주소를 넣어주세요 */
+        /* [1] 배너 영역 */
         .banner-container {
             width: 100%;
-            height: 250px;
+            height: 200px; /* 모바일에서 조금 줄임 */
             background-color: #e0e0e0;
             background-size: cover;
             background-position: center;
-            /* ▼▼▼ 배너 이미지 주소 입력 ▼▼▼ */
             background-image: url('https://github.com/MI1268/you/blob/main/%EC%9C%A0%ED%8A%9C%EB%B8%8C%20%EB%B0%B0%EB%84%88.png?raw=true'); 
         }
+        @media (min-width: 768px) { .banner-container { height: 250px; } }
 
+        /* [2] 채널 헤더 - 모바일 대응 */
         .channel-header {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 24px 32px 16px 32px;
+            padding: 16px;
             display: flex;
-            align-items: center;
+            flex-direction: column; /* 모바일은 세로 */
+            align-items: flex-start;
+        }
+
+        @media (min-width: 768px) {
+            .channel-header { flex-direction: row; align-items: center; padding: 24px 32px; }
         }
 
         .profile-pic {
-            width: 160px;
-            height: 160px;
+            width: 80px; height: 80px; /* 모바일 사이즈 */
             border-radius: 50%;
-            border: 4px solid white;
+            border: 2px solid white;
             background-color: #555;
             overflow: hidden;
-            margin-right: 24px;
+            margin-bottom: 16px;
             flex-shrink: 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .profile-pic img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        @media (min-width: 768px) {
+            .profile-pic { width: 160px; height: 160px; margin-right: 24px; margin-bottom: 0; border-width: 4px; }
         }
+        
+        .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
 
-        .channel-info-text h1 { margin: 0 0 8px 0; font-size: 28px; font-weight: 700; }
-        .channel-info-text p { margin: 2px 0; color: #606060; font-size: 14px; }
+        .channel-info-text h1 { margin: 0 0 4px 0; font-size: 20px; font-weight: 700; }
+        .channel-info-text p { margin: 2px 0; color: #606060; font-size: 13px; line-height: 1.4; }
+        
+        @media (min-width: 768px) {
+            .channel-info-text h1 { font-size: 28px; margin-bottom: 8px; }
+            .channel-info-text p { font-size: 14px; }
+        }
         
         .sub-button {
-            margin-top: 16px;
-            padding: 10px 20px;
+            margin-top: 12px;
+            padding: 8px 16px;
             background-color: #0f0f0f;
             color: white;
             border-radius: 20px;
@@ -60,18 +70,36 @@
             cursor: pointer;
         }
 
+        /* [3] 탭 영역 - 스크롤 가능하게 */
         .tabs-container { border-bottom: 1px solid #e5e5e5; background-color: #f9f9f9; }
-        .tabs { max-width: 1280px; margin: 0 auto; padding: 0 32px; display: flex; gap: 24px; }
-        .tab-item { padding: 16px 0; font-size: 15px; font-weight: 500; color: #606060; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tabs { 
+            max-width: 1280px; margin: 0 auto; padding: 0 16px; display: flex; gap: 20px; 
+            overflow-x: auto; white-space: nowrap; -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; } /* 탭 스크롤바 숨김 */
+
+        .tab-item { padding: 12px 0; font-size: 14px; font-weight: 500; color: #606060; cursor: pointer; border-bottom: 3px solid transparent; }
         .tab-item.active { color: #0f0f0f; border-bottom: 3px solid #0f0f0f; }
 
-        .main-content { max-width: 1280px; margin: 0 auto; padding: 32px; }
-        .section-title { margin-bottom: 24px; font-size: 18px; font-weight: 500; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        /* [4] 메인 콘텐츠 그리드 */
+        .main-content { max-width: 1280px; margin: 0 auto; padding: 16px; }
+        .section-title { margin-bottom: 16px; font-size: 16px; font-weight: 500; }
+        
+        @media (min-width: 768px) {
+            .main-content { padding: 32px; }
+            .section-title { font-size: 18px; margin-bottom: 24px; }
+        }
 
-        .video-card { background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .video-card:hover { transform: translateY(-4px); }
+        .video-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; /* 모바일 기본 한 줄 */
+            gap: 16px; 
+        }
 
+        @media (min-width: 480px) { grid-template-columns: repeat(2, 1fr); } /* 작은 태블릿 2줄 */
+        @media (min-width: 768px) { .video-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } } /* PC */
+
+        .video-card { background-color: transparent; border-radius: 12px; overflow: hidden; transition: transform 0.2s; }
         .thumbnail-box { 
             position: relative; 
             width: 100%; 
@@ -80,24 +108,11 @@
             border-radius: 12px; 
             overflow: hidden; 
         }
-        .thumbnail-box img { 
-            width: 100%; height: 100%; 
-            object-fit: cover; /* 어떤 비율의 사진도 16:9 안에 꽉 차게 보정 */
-            transition: transform 0.3s;
-        }
-        .video-card:hover .thumbnail-box img { transform: scale(1.05); }
-
-        /* [4] 유튜브 시간 표시 스타일 */
+        .thumbnail-box img { width: 100%; height: 100%; object-fit: cover; }
         .video-time {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
+            position: absolute; bottom: 8px; right: 8px;
+            background-color: rgba(0, 0, 0, 0.8); color: white;
+            padding: 2px 4px; border-radius: 4px; font-size: 12px; font-weight: 500;
         }
 
         .video-info { padding: 12px 0; }
@@ -114,7 +129,7 @@
 
     <div class="channel-header">
         <div class="profile-pic">
-            <img src="https://github.com/MI1268/you/blob/main/%EC%9C%A0%ED%8A%9C%EB%B8%8C%20%ED%94%84%EB%A1%9C%ED%95%84.png?raw=true">
+            <img src="https://github.com/MI1268/you/blob/main/9.webp?raw=true">
         </div>
         <div class="channel-info-text">
             <h1>치타뇨</h1>
